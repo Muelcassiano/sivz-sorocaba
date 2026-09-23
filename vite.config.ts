@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/sivz-sorocaba/', // 👈 ADICIONE ESSA LINHA AQUI
+    base: './', // 👈 COLOQUE UM PONTO ANTES DA BARRA AQUI
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
@@ -18,4 +18,3 @@ export default defineConfig(() => {
     },
   };
 });
-
