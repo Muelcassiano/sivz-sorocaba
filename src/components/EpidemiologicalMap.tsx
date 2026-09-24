@@ -15,6 +15,9 @@ import {
   Square,
   Activity,
   Maximize2,
+  Minimize2,
+  ChevronDown,
+  ChevronUp,
   AlertCircle
 } from 'lucide-react';
 import L from 'leaflet';
@@ -40,6 +43,11 @@ export const EpidemiologicalMap: React.FC<EpidemiologicalMapProps> = ({
   const [filterAgravo, setFilterAgravo] = useState<AgravoType | 'Todos'>('Todos');
   const [onlyConfirmed, setOnlyConfirmed] = useState(false);
   const [onlyHumanContact, setOnlyHumanContact] = useState(false);
+
+  // Fullscreen and Legend Controls
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLegendCollapsed, setIsLegendCollapsed] = useState(false);
+  const [legendPlacement, setLegendPlacement] = useState<'docked' | 'floating'>('docked');
 
   // Layer Visibility Toggles
   const [showCoveragePolygons, setShowCoveragePolygons] = useState(true);
@@ -78,6 +86,50 @@ export const EpidemiologicalMap: React.FC<EpidemiologicalMapProps> = ({
       return true;
     });
   }, [casos, filterAgravo, onlyConfirmed, onlyHumanContact, selectedColegiado]);
+
+  // Aggregate breakdown for cartographic legend
+  const legendCounts = useMemo(() => {
+    const counts = {
+      esporotricose: 0,
+      leishmaniose: 0,
+      leptospirose: 0,
+      raiva: 0,
+      total: filteredCasos.length,
+    };
+    filteredCasos.forEach(c => {
+      if (c.agravo === 'Esporotricose') counts.esporotricose++;
+      else if (c.agravo === 'Leishmaniose') counts.leishmaniose++;
+      else if (c.agravo === 'Leptospirose') counts.leptospirose++;
+      else if (c.agravo === 'Raiva') counts.raiva++;
+    });
+    return counts;
+  }, [filteredCasos]);
+
+  // Handle ESC key to exit fullscreen smoothly
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  // Invalidate map size whenever fullscreen, view mode or legend layout toggles
+  useEffect(() => {
+    if (viewMode !== 'map' || !mapInstanceRef.current) return;
+    const t1 = setTimeout(() => {
+      mapInstanceRef.current?.invalidateSize();
+    }, 80);
+    const t2 = setTimeout(() => {
+      mapInstanceRef.current?.invalidateSize();
+    }, 320);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [isFullscreen, viewMode, isLegendCollapsed, legendPlacement]);
 
   // Aggregate stats by neighborhood for matrix view
   const bairroStats = useMemo(() => {
@@ -282,7 +334,11 @@ export const EpidemiologicalMap: React.FC<EpidemiologicalMapProps> = ({
           </div>
         `;
 
-        marker.bindPopup(popupContent);
+        marker.bindPopup(popupContent, {
+          autoPan: true,
+          autoPanPadding: [50, 50],
+          maxWidth: 320,
+        });
         marker.addTo(ubsGroup);
       });
     }
@@ -374,7 +430,11 @@ export const EpidemiologicalMap: React.FC<EpidemiologicalMapProps> = ({
         </div>
       `;
 
-      marker.bindPopup(popupHtml);
+      marker.bindPopup(popupHtml, {
+        autoPan: true,
+        autoPanPadding: [50, 50],
+        maxWidth: 320,
+      });
 
       marker.on('popupopen', () => {
         const btnId = `btn-case-${caso.id.replace(/[^a-zA-Z0-9]/g, '_')}`;
@@ -461,152 +521,336 @@ export const EpidemiologicalMap: React.FC<EpidemiologicalMapProps> = ({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Top Header & Switcher */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
-              <span>Mapeamento Geoespacial de Focos & Abrangência Territorial</span>
-            </h2>
-            <span className="text-[11px] font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
-              OpenStreetMap + GeoJSON UBS
-            </span>
+    <div className={isFullscreen ? "fixed inset-0 z-[2000] bg-slate-950 flex flex-col p-3 sm:p-4 overflow-hidden text-slate-100" : "space-y-4"}>
+      {/* Top Header & Switcher (only shown when not in fullscreen mode) */}
+      {!isFullscreen && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-500" />
+                <span>Mapeamento Geoespacial de Focos & Abrangência Territorial</span>
+              </h2>
+              <span className="text-[11px] font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                OpenStreetMap + GeoJSON UBS
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Visualização cartográfica oficial das Unidades Básicas de Saúde, zonas circulares de cobertura sanitária e {filteredCasos.length} focos ativos de zoonoses em Sorocaba.
+            </p>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Visualização cartográfica oficial das Unidades Básicas de Saúde, zonas circulares de cobertura sanitária e {filteredCasos.length} focos ativos de zoonoses em Sorocaba.
-          </p>
-        </div>
 
-        {/* Mode Switcher */}
-        <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-0.5 text-xs font-medium">
-            <button
-              onClick={() => setViewMode('map')}
-              className={`px-3 py-1.5 rounded transition-all cursor-pointer ${
-                viewMode === 'map'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-              }`}
-            >
-              Mapa Interativo
-            </button>
-            <button
-              onClick={() => setViewMode('matrix')}
-              className={`px-3 py-1.5 rounded transition-all cursor-pointer ${
-                viewMode === 'matrix'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-              }`}
-            >
-              Ranking de Risco por Bairro
-            </button>
+          {/* Mode Switcher */}
+          <div className="flex items-center gap-2">
+            <div className="inline-flex rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 p-0.5 text-xs font-medium">
+              <button
+                onClick={() => setViewMode('map')}
+                className={`px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  viewMode === 'map'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                Mapa Interativo
+              </button>
+              <button
+                onClick={() => setViewMode('matrix')}
+                className={`px-3 py-1.5 rounded transition-all cursor-pointer ${
+                  viewMode === 'matrix'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-semibold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                Ranking de Risco por Bairro
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {viewMode === 'map' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          {/* Main Map Box (3 cols) */}
-          <div className="lg:col-span-3 space-y-3">
-            {/* Quick Controls Bar */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
-              {/* Agravo Filter */}
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Agravo:</span>
-                <select
-                  value={filterAgravo}
-                  onChange={(e) => setFilterAgravo(e.target.value as any)}
-                  className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1 text-xs text-slate-800 dark:text-slate-200"
-                >
-                  <option value="Todos">Todos os Agravos (582)</option>
-                  <option value="Esporotricose">Esporotricose Felina/Canina (416)</option>
-                  <option value="Leishmaniose">Leishmaniose Visceral Canina (97)</option>
-                  <option value="Leptospirose">Leptospirose Canina (62)</option>
-                  <option value="Raiva">Raiva Animal / Quirópteros (7)</option>
-                </select>
-              </div>
+        <div className={isFullscreen ? "flex-1 flex flex-col min-h-0 space-y-2" : "grid grid-cols-1 lg:grid-cols-4 gap-4"}>
+          {/* Main Map Box */}
+          <div className={isFullscreen ? "flex-1 flex flex-col min-h-0 space-y-2" : "lg:col-span-3 space-y-3"}>
+            
+            {/* Quick Controls Bar (adapts between standard and fullscreen) */}
+            <div className={`${isFullscreen ? 'bg-slate-900/90 border-slate-800 text-slate-200' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'} border rounded-lg p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-2.5 text-xs shadow-xs`}>
+              
+              <div className="flex flex-wrap items-center gap-2.5">
+                {isFullscreen && (
+                  <div className="flex items-center gap-1.5 mr-1 font-bold text-slate-100">
+                    <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span className="hidden sm:inline">Sorocaba · Focos & UBS</span>
+                    <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded font-mono">
+                      Tela Cheia
+                    </span>
+                  </div>
+                )}
 
-              {/* Colegiado Filter */}
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 dark:text-slate-300">Colegiado:</span>
-                <div className="flex flex-wrap items-center gap-1">
-                  {(['Todos', 'Sudoeste', 'Noroeste', 'Centro Norte', 'Centro Sul', 'Norte', 'Leste'] as const).map(col => (
-                    <button
-                      key={col}
-                      onClick={() => setSelectedColegiado(col)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors cursor-pointer ${
-                        selectedColegiado === col
-                          ? 'bg-emerald-700 text-white font-semibold'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-                      }`}
-                    >
-                      {col}
-                    </button>
-                  ))}
+                {/* Agravo Filter */}
+                <div className="flex items-center gap-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Agravo:</span>
+                  <select
+                    value={filterAgravo}
+                    onChange={(e) => setFilterAgravo(e.target.value as any)}
+                    className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1 text-xs text-slate-800 dark:text-slate-200"
+                  >
+                    <option value="Todos">Todos os Agravos (582)</option>
+                    <option value="Esporotricose">Esporotricose Felina/Canina (416)</option>
+                    <option value="Leishmaniose">Leishmaniose Visceral Canina (97)</option>
+                    <option value="Leptospirose">Leptospirose Canina (62)</option>
+                    <option value="Raiva">Raiva Animal / Quirópteros (7)</option>
+                  </select>
+                </div>
+
+                {/* Colegiado Filter */}
+                <div className="flex items-center gap-1.5">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 hidden md:inline">Colegiado:</span>
+                  <div className="flex flex-wrap items-center gap-1">
+                    {(['Todos', 'Sudoeste', 'Noroeste', 'Centro Norte', 'Centro Sul', 'Norte', 'Leste'] as const).map(col => (
+                      <button
+                        key={col}
+                        onClick={() => setSelectedColegiado(col)}
+                        className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors cursor-pointer ${
+                          selectedColegiado === col
+                            ? 'bg-emerald-700 text-white font-semibold'
+                            : isFullscreen
+                              ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                        }`}
+                      >
+                        {col}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Reset Center button */}
-              <button
-                onClick={centerOnSorocaba}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded border border-slate-300 dark:border-slate-700 cursor-pointer text-xs"
-                title="Recentralizar Mapa em Sorocaba"
-              >
-                <Crosshair className="w-3.5 h-3.5" />
-                <span>Centralizar</span>
-              </button>
+              {/* Action Buttons: Centralizar, Legenda Toggle, Fullscreen Toggle */}
+              <div className="flex items-center gap-2 ml-auto">
+                {/* Reset Center button */}
+                <button
+                  onClick={centerOnSorocaba}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded border cursor-pointer text-xs transition-colors ${
+                    isFullscreen
+                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                      : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
+                  }`}
+                  title="Recentralizar Mapa em Sorocaba"
+                >
+                  <Crosshair className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Centralizar</span>
+                </button>
+
+                {/* Legenda Toggle Button */}
+                <button
+                  onClick={() => setIsLegendCollapsed(!isLegendCollapsed)}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded border text-xs cursor-pointer transition-colors ${
+                    !isLegendCollapsed
+                      ? 'bg-emerald-50 dark:bg-emerald-950/70 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-medium'
+                      : isFullscreen
+                        ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300'
+                        : 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                  title={isLegendCollapsed ? 'Expandir Legenda Cartográfica' : 'Recolher Legenda Cartográfica'}
+                >
+                  <Layers className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{isLegendCollapsed ? 'Ver Legenda' : 'Recolher Legenda'}</span>
+                  {isLegendCollapsed ? <ChevronDown className="w-3 h-3" /> : <ChevronUp className="w-3 h-3" />}
+                </button>
+
+                {/* Fullscreen Toggle Button */}
+                {isFullscreen ? (
+                  <button
+                    onClick={() => setIsFullscreen(false)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded font-medium cursor-pointer text-xs shadow-xs transition-colors"
+                    title="Recolher e sair do modo Tela Cheia (ESC)"
+                  >
+                    <Minimize2 className="w-3.5 h-3.5" />
+                    <span>Recolher Tela Cheia</span>
+                    <kbd className="hidden sm:inline text-[9px] bg-rose-800/80 px-1 py-0.5 rounded font-mono">ESC</kbd>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsFullscreen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-medium cursor-pointer text-xs shadow-xs transition-colors"
+                    title="Expandir visualização do mapa em tela cheia"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>Tela Cheia</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Leaflet Map Canvas */}
-            <div className="relative border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-950 shadow-inner h-[580px]">
+            <div className={`relative border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-950 shadow-inner ${
+              isFullscreen ? 'flex-1 w-full min-h-0' : 'h-[580px]'
+            }`}>
               <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-              {/* Floating Legend / Quick Stats inside map */}
-              <div className="absolute top-3 right-3 z-[1000] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 shadow-md text-[11px] max-w-xs space-y-2">
-                <div className="font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
-                  <span className="flex items-center gap-1">
-                    <Layers className="w-3.5 h-3.5 text-emerald-600" />
-                    Legenda Cartográfica
-                  </span>
-                  <span className="font-mono text-[10px] text-slate-500">
-                    {filteredCasos.length} focos
-                  </span>
+              {/* Floating Legend (rendered ONLY if user explicitly chose floating mode and not collapsed) */}
+              {legendPlacement === 'floating' && !isLegendCollapsed && (
+                <div className="absolute bottom-4 right-4 z-[400] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 shadow-lg text-[11px] max-w-xs space-y-2">
+                  <div className="font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
+                    <span className="flex items-center gap-1">
+                      <Layers className="w-3.5 h-3.5 text-emerald-600" />
+                      Legenda Cartográfica
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setLegendPlacement('docked')}
+                        className="text-[10px] text-emerald-700 dark:text-emerald-400 hover:underline px-1 cursor-pointer"
+                        title="Fixar no rodapé abaixo do mapa para liberar a visão"
+                      >
+                        Fixar no Rodapé
+                      </button>
+                      <button
+                        onClick={() => setIsLegendCollapsed(true)}
+                        className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-0.5 cursor-pointer"
+                        title="Recolher Legenda"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-orange-500 border border-white inline-block"></span>
+                        <span className="text-slate-700 dark:text-slate-300">Esporotricose Felina</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-slate-500">{legendCounts.esporotricose}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-purple-600 border border-white inline-block"></span>
+                        <span className="text-slate-700 dark:text-slate-300">Leishmaniose Visceral</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-slate-500">{legendCounts.leishmaniose}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-sky-600 border border-white inline-block"></span>
+                        <span className="text-slate-700 dark:text-slate-300">Leptospirose Canina</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-slate-500">{legendCounts.leptospirose}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-3 h-3 rounded-full bg-rose-600 border border-white inline-block"></span>
+                        <span className="text-slate-700 dark:text-slate-300">Raiva Animal / Quiróptero</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-slate-500">{legendCounts.raiva}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">🏥</span>
+                        <span className="text-slate-700 dark:text-slate-300">UBS Sorocaba</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-slate-500">15</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3.5 h-2 rounded border border-dashed border-sky-500 bg-sky-400/20 inline-block"></span>
+                      <span className="text-slate-700 dark:text-slate-300">Abrangência Sanitária UBS</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Legenda Cartográfica no Rodapé (Posição Ideal: 0% de sobreposição com pontos ou popups!) */}
+            {legendPlacement === 'docked' && (
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 sm:p-3 text-xs shadow-xs transition-all">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-emerald-600 dark:text-emerald-500 shrink-0" />
+                    <span className="font-bold text-slate-800 dark:text-slate-200">
+                      Legenda Cartográfica do Território
+                    </span>
+                    <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+                      {filteredCasos.length} focos ativos no filtro
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setLegendPlacement('floating')}
+                      className="text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 underline cursor-pointer hidden sm:inline"
+                      title="Alternar para card flutuante sobre o mapa"
+                    >
+                      Mudar para Flutuante
+                    </button>
+                    <button
+                      onClick={() => setIsLegendCollapsed(!isLegendCollapsed)}
+                      className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-medium cursor-pointer transition-colors"
+                      title={isLegendCollapsed ? 'Expandir Legenda' : 'Recolher Legenda'}
+                    >
+                      <span>{isLegendCollapsed ? 'Expandir Legenda' : 'Recolher'}</span>
+                      {isLegendCollapsed ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-orange-500 border border-white inline-block"></span>
-                    <span className="text-slate-700 dark:text-slate-300">Esporotricose Felina</span>
+                {!isLegendCollapsed && (
+                  <div className="mt-2.5 pt-2.5 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                    <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="w-3.5 h-3.5 rounded-full bg-orange-500 border-2 border-white shadow-xs shrink-0"></span>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px]">Esporotricose</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">{legendCounts.esporotricose} focos</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="w-3.5 h-3.5 rounded-full bg-purple-600 border-2 border-white shadow-xs shrink-0"></span>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px]">Leishmaniose</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">{legendCounts.leishmaniose} focos</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="w-3.5 h-3.5 rounded-full bg-sky-600 border-2 border-white shadow-xs shrink-0"></span>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px]">Leptospirose</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">{legendCounts.leptospirose} focos</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="w-3.5 h-3.5 rounded-full bg-rose-600 border-2 border-white shadow-xs shrink-0"></span>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px]">Raiva Animal</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">{legendCounts.raiva} focos</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="text-sm shrink-0">🏥</span>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px]">UBS Municipal</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">15 unidades</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                      <span className="w-4 h-3 rounded border border-dashed border-sky-500 bg-sky-400/25 shrink-0"></span>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-800 dark:text-slate-200 truncate text-[11px]">Abrangência UBS</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">Polígonos</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-purple-600 border border-white inline-block"></span>
-                    <span className="text-slate-700 dark:text-slate-300">Leishmaniose Visceral</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-sky-600 border border-white inline-block"></span>
-                    <span className="text-slate-700 dark:text-slate-300">Leptospirose Canina</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-full bg-rose-600 border border-white inline-block"></span>
-                    <span className="text-slate-700 dark:text-slate-300">Raiva Animal / Quiróptero</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
-                    <span className="text-sm">🏥</span>
-                    <span className="text-slate-700 dark:text-slate-300">Unidade Básica de Saúde (UBS)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3.5 h-2 rounded border border-dashed border-sky-500 bg-sky-400/20 inline-block"></span>
-                    <span className="text-slate-700 dark:text-slate-300">Abrangência Sanitária UBS</span>
-                  </div>
-                </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Side Controls & Layers Panel (1 col) */}
-          <div className="space-y-4">
+          {/* Side Controls & Layers Panel (hidden when in fullscreen to maximize map canvas) */}
+          {!isFullscreen && (
+            <div className="space-y-4">
             {/* Layers Toggle Card */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
@@ -735,6 +979,7 @@ export const EpidemiologicalMap: React.FC<EpidemiologicalMapProps> = ({
               </div>
             </div>
           </div>
+          )}
         </div>
       ) : (
         /* Matrix View: Ranking and Detailed Territorial Analysis */

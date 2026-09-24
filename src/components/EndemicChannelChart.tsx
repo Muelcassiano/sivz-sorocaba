@@ -1,10 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CasoZoonoses, AgravoType } from '../types/zoonoses';
-import { HISTORICAL_CASES_BY_YEAR } from '../data/initialData';
 import { Calendar, ChevronDown } from 'lucide-react';
 
 interface EndemicChannelChartProps {
   casos: CasoZoonoses[];
+  selectedYear?: number;
+  onSelectYear?: (year: number) => void;
+  selectedAgravo?: AgravoType | 'Todos';
+  onSelectAgravo?: (agravo: AgravoType | 'Todos') => void;
   isDarkMode?: boolean;
 }
 
@@ -42,21 +45,42 @@ function getEpidemiologicalWeek(dateStr: string): number {
   return Math.min(30, Math.max(1, Math.ceil(dayOfYear / 7)));
 }
 
-export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos, isDarkMode = false }) => {
-  // Requirements: Default to 'mensal', allow historical year selection from 2019 to 2026
-  const [selectedYear, setSelectedYear] = useState<number>(2026);
+export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ 
+  casos, 
+  selectedYear: propSelectedYear,
+  onSelectYear,
+  selectedAgravo: propSelectedAgravo,
+  onSelectAgravo,
+  isDarkMode = false 
+}) => {
+  // Controlled or uncontrolled year and agravo
+  const [internalYear, setInternalYear] = useState<number>(2026);
+  const [internalAgravo, setInternalAgravo] = useState<AgravoType | 'Todos'>('Todos');
+
+  const selectedYear = propSelectedYear !== undefined ? propSelectedYear : internalYear;
+  const handleYearChange = (yr: number) => {
+    setInternalYear(yr);
+    if (onSelectYear) onSelectYear(yr);
+  };
+
+  const selectedAgravo = propSelectedAgravo !== undefined ? propSelectedAgravo : internalAgravo;
+  const handleAgravoChange = (agr: AgravoType | 'Todos') => {
+    setInternalAgravo(agr);
+    if (onSelectAgravo) onSelectAgravo(agr);
+  };
+
   const [viewType, setViewType] = useState<'mensal' | 'semanal'>('mensal');
-  const [selectedAgravo, setSelectedAgravo] = useState<AgravoType | 'Todos'>('Todos');
   const [periodoMensal, setPeriodoMensal] = useState<PeriodoMensalFilter>('ano');
   const [periodoSemanal, setPeriodoSemanal] = useState<PeriodoSemanalFilter>('ano');
   const [hoveredPoint, setHoveredPoint] = useState<PointData | null>(null);
 
-  // Active cases dataset based on selected year
+  // Active cases dataset strictly based on actual notifications for the selected year
+  // If a year has no records in the database, it strictly returns []
   const activeDataset = useMemo(() => {
-    if (selectedYear === 2026) {
-      return casos;
-    }
-    return (HISTORICAL_CASES_BY_YEAR[selectedYear] as CasoZoonoses[]) || [];
+    return casos.filter(c => {
+      if (!c.dataNotificacao) return false;
+      return c.dataNotificacao.startsWith(String(selectedYear));
+    });
   }, [selectedYear, casos]);
 
   // Specific baseline expectations per agravo
@@ -177,32 +201,100 @@ export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos,
     return Math.ceil((max * 1.15) / 5) * 5;
   }, [points]);
 
-  const getY = (val: number) => padTop + chartH - (val / maxY) * chartH;
+  // Smooth fluid transition animation when filter or year changes
+  const [animatedPoints, setAnimatedPoints] = useState<PointData[]>(points);
+  const [animatedMaxY, setAnimatedMaxY] = useState<number>(maxY);
+  const animFrameRef = useRef<number | null>(null);
+  const prevPointsRef = useRef<PointData[]>(points);
+  const prevMaxYRef = useRef<number>(maxY);
+
+  useEffect(() => {
+    // If number of points differs (e.g. monthly 12 vs weekly 30), update instantly
+    if (prevPointsRef.current.length !== points.length || points.length === 0) {
+      setAnimatedPoints(points);
+      setAnimatedMaxY(maxY);
+      prevPointsRef.current = points;
+      prevMaxYRef.current = maxY;
+      return;
+    }
+
+    const startPoints = animatedPoints.length === points.length ? animatedPoints : prevPointsRef.current;
+    const targetPoints = points;
+    const startMaxY = animatedMaxY;
+    const targetMaxY = maxY;
+    const startTime = performance.now();
+    const duration = 460; // ms
+
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+    }
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic: smooth fluid deceleration
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      const interpolated: PointData[] = targetPoints.map((target, idx) => {
+        const start = startPoints[idx] || target;
+        return {
+          ...target,
+          realCount: start.realCount + (target.realCount - start.realCount) * ease,
+          esperado: start.esperado + (target.esperado - start.esperado) * ease,
+          alerta: start.alerta + (target.alerta - start.alerta) * ease,
+          limiteSuperior: start.limiteSuperior + (target.limiteSuperior - start.limiteSuperior) * ease,
+        };
+      });
+
+      const currentMaxY = startMaxY + (targetMaxY - startMaxY) * ease;
+
+      setAnimatedPoints(interpolated);
+      setAnimatedMaxY(currentMaxY);
+
+      if (progress < 1) {
+        animFrameRef.current = requestAnimationFrame(animate);
+      } else {
+        prevPointsRef.current = targetPoints;
+        prevMaxYRef.current = targetMaxY;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, [points, maxY]);
+
+  const getY = (val: number) => padTop + chartH - (val / (animatedMaxY || 1)) * chartH;
   const getX = (idx: number) => {
-    if (points.length <= 1) return padLeft + chartW / 2;
-    return padLeft + (idx / (points.length - 1)) * chartW;
+    const len = animatedPoints.length || points.length;
+    if (len <= 1) return padLeft + chartW / 2;
+    return padLeft + (idx / (len - 1)) * chartW;
   };
 
-  // Build SVG path strings
+  // Build SVG path strings using smoothly animated coordinates
   const pathReal = useMemo(() => {
-    if (points.length === 0) return '';
-    return points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.realCount).toFixed(1)}`).join(' ');
-  }, [points, maxY]);
+    if (animatedPoints.length === 0) return '';
+    return animatedPoints.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.realCount).toFixed(1)}`).join(' ');
+  }, [animatedPoints, animatedMaxY]);
 
   const pathEsperado = useMemo(() => {
-    if (points.length === 0) return '';
-    return points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.esperado).toFixed(1)}`).join(' ');
-  }, [points, maxY]);
+    if (animatedPoints.length === 0) return '';
+    return animatedPoints.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.esperado).toFixed(1)}`).join(' ');
+  }, [animatedPoints, animatedMaxY]);
 
   const pathAlerta = useMemo(() => {
-    if (points.length === 0) return '';
-    return points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.alerta).toFixed(1)}`).join(' ');
-  }, [points, maxY]);
+    if (animatedPoints.length === 0) return '';
+    return animatedPoints.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.alerta).toFixed(1)}`).join(' ');
+  }, [animatedPoints, animatedMaxY]);
 
   const pathSuperior = useMemo(() => {
-    if (points.length === 0) return '';
-    return points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.limiteSuperior).toFixed(1)}`).join(' ');
-  }, [points, maxY]);
+    if (animatedPoints.length === 0) return '';
+    return animatedPoints.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx).toFixed(1)} ${getY(p.limiteSuperior).toFixed(1)}`).join(' ');
+  }, [animatedPoints, animatedMaxY]);
 
   const yTicks = [0, Math.round(maxY * 0.33), Math.round(maxY * 0.66), maxY];
 
@@ -243,21 +335,24 @@ export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos,
             <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Ano:</span>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
+              onChange={(e) => handleYearChange(parseInt(e.target.value, 10))}
               className="bg-transparent text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-hidden cursor-pointer"
             >
-              {AVAILABLE_YEARS.map(yr => (
-                <option key={yr} value={yr} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
-                  {yr} {yr === 2026 ? '(Base Atual - 582 fichas)' : '(Série Histórica)'}
-                </option>
-              ))}
+              {AVAILABLE_YEARS.map(yr => {
+                const yrCount = casos.filter(c => c.dataNotificacao && c.dataNotificacao.startsWith(String(yr))).length;
+                return (
+                  <option key={yr} value={yr} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+                    {yr} {yrCount > 0 ? `(Base Atual - ${yrCount} fichas)` : '(0 notificações - Sem registros)'}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
           {/* Agravo Selector */}
           <select
             value={selectedAgravo}
-            onChange={(e) => setSelectedAgravo(e.target.value as any)}
+            onChange={(e) => handleAgravoChange(e.target.value as any)}
             className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2.5 py-1 text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-hidden cursor-pointer"
           >
             <option value="Todos">Todos os Agravos ({activeDataset.length})</option>
@@ -369,7 +464,11 @@ export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos,
 
         {/* Status Badge */}
         <div className="flex items-center gap-2">
-          {isEpidemic ? (
+          {totalCasosFiltro === 0 ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+              0 Notificações Registradas ({selectedYear})
+            </span>
+          ) : isEpidemic ? (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
               Acima do Limiar Epidêmico
             </span>
@@ -483,7 +582,8 @@ export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos,
           />
 
           {/* Nodes for Real Cases */}
-          {points.map((p, idx) => {
+          {animatedPoints.map((p, idx) => {
+            const originalPoint = points[idx] || p;
             const cx = getX(idx);
             const cy = getY(p.realCount);
             const isHovered = hoveredPoint?.label === p.label;
@@ -491,7 +591,7 @@ export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos,
             return (
               <g
                 key={p.label}
-                onMouseEnter={() => setHoveredPoint(p)}
+                onMouseEnter={() => setHoveredPoint(originalPoint)}
                 onMouseLeave={() => setHoveredPoint(null)}
                 className="cursor-pointer"
               >
@@ -589,8 +689,10 @@ export const EndemicChannelChart: React.FC<EndemicChannelChartProps> = ({ casos,
         <div className="text-[11px]">
           {selectedYear === 2026 ? (
             <span>Base consolidada oficial (01/Jan/2026 a 23/Jul/2026 · Prefeitura de Sorocaba)</span>
+          ) : totalCasosFiltro === 0 ? (
+            <span className="text-amber-600 dark:text-amber-400 font-medium">Sem registros cadastrados para o ano de {selectedYear} na base de dados</span>
           ) : (
-            <span>Série histórica consolidada da Divisão de Zoonoses</span>
+            <span>Registros consolidados para {selectedYear}</span>
           )}
         </div>
       </div>

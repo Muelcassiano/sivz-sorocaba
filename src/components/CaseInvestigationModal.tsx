@@ -83,7 +83,7 @@ Responsável Técnico Zoonoses: ${formData.analistaNome || 'Bióloga Bruna Paola
 Registro Profissional: ${formData.analistaRegistro || 'CRBio / CRMV'}`;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-[9999] overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
         
         {/* Modal Header */}

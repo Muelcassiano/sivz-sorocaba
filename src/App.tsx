@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { CasoZoonoses, AgravoType, FiltrosCasos } from './types/zoonoses';
 import { getCasos, updateCaso, resetarCasos, saveCasos } from './services/storage';
 import { Navbar } from './components/Navbar';
@@ -45,6 +45,32 @@ export default function App() {
     apenasPendentes: false,
     buscaTexto: '',
   });
+
+  // Dashboard synchronized year and agravo filters
+  const [dashboardYear, setDashboardYear] = useState<number>(2026);
+  const [dashboardAgravo, setDashboardAgravo] = useState<AgravoType | 'Todos'>('Todos');
+
+  const handleDashboardAgravoChange = (agravo: AgravoType | 'Todos') => {
+    setDashboardAgravo(agravo);
+    setFiltros(prev => ({ ...prev, agravo }));
+  };
+
+  const handleDashboardYearChange = (year: number) => {
+    setDashboardYear(year);
+  };
+
+  // Filtered dataset for the dashboard operational table (synchronized with year & agravo)
+  const casosDashboardTabela = useMemo(() => {
+    return casos.filter(c => {
+      if (!c.dataNotificacao || !c.dataNotificacao.startsWith(String(dashboardYear))) {
+        return false;
+      }
+      if (dashboardAgravo !== 'Todos' && c.agravo !== dashboardAgravo) {
+        return false;
+      }
+      return true;
+    });
+  }, [casos, dashboardYear, dashboardAgravo]);
 
   // Sync Dark Mode to <html> tag
   useEffect(() => {
@@ -204,7 +230,10 @@ export default function App() {
           <div className="space-y-6">
             <DashboardStats
               casos={casos}
-              onSelectAgravo={handleSelectAgravo}
+              selectedYear={dashboardYear}
+              onSelectYear={handleDashboardYearChange}
+              selectedAgravo={dashboardAgravo}
+              onSelectAgravo={handleDashboardAgravoChange}
               onFilterHumanLesions={handleFilterHumanLesions}
               onFilterPending={handleFilterPending}
               onFilterActiveTreatment={handleFilterActiveTreatment}
@@ -212,10 +241,31 @@ export default function App() {
             />
 
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  Fila Operacional de Notificações & Acompanhamentos ({casos.length} registros)
-                </h2>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    Fila Operacional de Notificações & Acompanhamentos
+                  </h2>
+                  <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    {casosDashboardTabela.length} {casosDashboardTabela.length === 1 ? 'registro' : 'registros'}
+                  </span>
+                  {(dashboardYear !== 2026 || dashboardAgravo !== 'Todos') && (
+                    <span className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+                      <span>Filtro ativo: {dashboardYear !== 2026 ? `Ano ${dashboardYear}` : ''} {dashboardAgravo !== 'Todos' ? `· ${dashboardAgravo}` : ''}</span>
+                      <button 
+                        onClick={() => {
+                          setDashboardYear(2026);
+                          setDashboardAgravo('Todos');
+                          setFiltros(prev => ({ ...prev, agravo: 'Todos' }));
+                        }}
+                        className="hover:underline font-bold cursor-pointer ml-0.5"
+                        title="Resetar para Ano 2026 / Todos os Agravos"
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={() => setActiveTab('investigacoes')}
                   className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold hover:underline cursor-pointer"
@@ -225,7 +275,7 @@ export default function App() {
               </div>
 
               <CaseTable
-                casos={casos}
+                casos={casosDashboardTabela}
                 onOpenCase={c => setSelectedCaso(c)}
                 filtros={filtros}
                 setFiltros={setFiltros}

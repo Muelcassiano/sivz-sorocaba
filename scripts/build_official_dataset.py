@@ -394,7 +394,7 @@ for ef in espo_files:
                 "statusInvestigacao": status_inv,
                 "tratamentoMedicamento": trat or ("Itraconazol 100mg" if res_final != "Negativo" else ""),
                 "pessoasComLesoes": has_human,
-                "notificadoVE": has_human == "Sim",
+                "notificadoVE": False,
                 "redCapId": redcap,
                 "observacoesTecnicas": obs
             })
@@ -488,7 +488,7 @@ for i in range(cur_espo_count + 1, target_espo + 1):
         "statusInvestigacao": status,
         "tratamentoMedicamento": "Itraconazol 100mg" if res_final != "Negativo" else "",
         "pessoasComLesoes": "Sim" if is_human else "Não",
-        "notificadoVE": is_human,
+        "notificadoVE": False,
         "redCapId": "",
         "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
     })

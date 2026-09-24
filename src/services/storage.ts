@@ -2,7 +2,7 @@ import { CasoZoonoses, AgravoType } from '../types/zoonoses';
 import { INITIAL_CASES } from '../data/initialData';
 
 export const CASOS_INICIAIS = INITIAL_CASES;
-const STORAGE_KEY = 'sivz_sorocaba_casos_v4_strict_dates';
+const STORAGE_KEY = 'sivz_sorocaba_casos_v5_restored';
 
 export function getCasos(): CasoZoonoses[] {
   try {

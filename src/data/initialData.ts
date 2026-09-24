@@ -6276,7 +6276,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "N/A",
     "observacoesTecnicas": "EMAIL À VESEM COLETA DE MATERIAL DO FELINO"
   },
@@ -6504,7 +6504,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "RTA4D4WC",
     "observacoesTecnicas": "SEMPRE NESTE ENDEREÇO"
   },
@@ -6618,7 +6618,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "T3NPRWT3",
     "observacoesTecnicas": "FELINO APARECEU HÁ UM MÊS, CHEGOU SINAN DE MORDEDURA, PASSOU PERÍODO DE OBSERVAÇÃO. enviado à ve."
   },
@@ -6694,7 +6694,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "NA NOT RELATA CASO HUMANO, MAS EM CONVERSA COM SRA BEATRIZ A MESMA RELATA QUE A MAES QUE ESTAVA COM FERIDAS NÃO TEM AMIS NADA, NÃO ERA ESPOROTRICOSE."
   },
@@ -6960,7 +6960,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "PXEM8RL8",
     "observacoesTecnicas": "RELATA QUE GATA FOI JOGADA NO SEU QUINTAL JA COM FERIDAS EM SET/25, DESDE ENTÃO ESTA TRATANDO SEM MELHORA. TEM AMIS 8 GATOS NA CASA, MAS GATA ESTA ISOLADA. SEGUNDO ELE ESTA MEDICANDO DIREITINHO. 17/03/26 - ALTA."
   },
@@ -7150,7 +7150,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "WMFT834K",
     "observacoesTecnicas": "EM CONVERSA COM SRA STELA A MESMA RELATA QUE GATO FOI RESGATADO DA RUA, EM FRENTE A SUA CASA CHEIO DE FERIDAS, NO MESMO DIA QUE VIU ELE JA PEGOU E LEVOU EM VETERINARIO MAS NÃO IA CONSEGUIR TRATAR DEVIDO A GRAVIDADE E FOI REALIZADA EUTANASIA DIA 28/01/26. DIZ QUE TEM MAIS GATOS LA COM FERIDAS E IRA TENTAR PEGAR. FECHAR COMO POSITIVO POR CLINICO EPIDEMIOLOGICO."
   },
@@ -7188,7 +7188,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "HR88DFDM",
     "observacoesTecnicas": "ESTA DANDO ITC 36 MG DESDE O DIA 20/01/26. AGENDADA VISITA PARA ASSINAR TERMO PARA DIA 02, MAS IREMOS FECHAR POR CLINICO EPIDEMIOLOGICO, POIS JA ESTA EM TRATAMENTO. VIVE NESTE ENDREÇO HA 3 ANOS, SOBE EM TELHADO DA CASA. (CULTURA NEGATIVA). NOT 37/26 TOM- RELATA EUTANASIA EM MAIO."
   },
@@ -7226,7 +7226,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "8DRX87AK",
     "observacoesTecnicas": "MORAVA NA RUA CORONEL OSCAR DE MELLO GAIA, 16 , ED GABRIELA, TERREO, E LA AS VEZES ESCAPAVA E BRIGOU COM GATOS. FERIDAS INICIARAM FINAL DE DEZEMBRO. CASO ENCAMINHADO À VE"
   },
@@ -7644,7 +7644,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "LHRCP9K8",
     "observacoesTecnicas": "FERIDAS INICIARAM HA 1 MES EM ORELHAS E MTE. INICIOU ITC E IP 100 MG DIA 23/01/26. NESTE ENDEREÇO HA 8 ANOS. TEM 9 GATOS NA CASA. TEM MAIS 1 (PRETINHO) COM LESÃO NA ORELHA TAMBÉM EM TRATAMENTO, MESMA MEDICAÇÃO QUE CACO, MAS NÃO FOI FEITO EXAME NESTE (FECHAR POR CLINICO- EPIDEMIOLOGICO). NOT 71/26 FELINO PRETINHO, SRD, 7 ANOS, MACHO CASTRADO, BRANCO E PRETO, LESÃO EM ORELHAS. SEMI DOMICILIADO. EM 18/06/26 - NOT 49/26 CACO E NOT 71/26 PRETINHO=- RELATA QUE TRATOU ELES ATE MAIO E QUE VETERINARIA QUE ACOMPANHA ELES LIBEROU E DEU ALTA. SEM FERIDAS. caso humano relacionado enviado à VE em 10/02/26"
   },
@@ -8290,7 +8290,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "P7J8NAN3",
     "observacoesTecnicas": "SEMPRE MOROU NESTE ENDEREÇO, TUTOR COM LESÕES, ENVIADO À VE. em 16/07/26 - RELATA QUE FERIDAS JA SECARAM E CRESCEU PELOS HA MAIS DE 2 MESES, MANTER ITC ATE FINAL DO MES E ALTA!"
   },
@@ -8366,7 +8366,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "CASO ENCAMINHADO PELA VE."
   },
@@ -8404,7 +8404,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "JYA7C9AK",
     "observacoesTecnicas": "NESTE ENDEREÇO HÁ 1 ANO. CASO HUMANO ENVIADO À VE. EM TRATAMENTO UBS VILA ANGELICA. Protocolo 12289364800. EM 24/03/2026 - SCOBA (69/26) RELATA PIORA NO QUADRO. OPTOU PELA EUTANASIA. REALIZADA EUTANASIA."
   },
@@ -8480,7 +8480,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "FYYEFFKR",
     "observacoesTecnicas": "NOT 49/26 CACO E NOT 71/26 PRETINHO=- RELATA QUE TRATOU ELES ATE MAIO E QUE VETERINARIA QUE ACOMPANHA ELES LIBEROU E DEU ALTA. SEM FERIDAS. coso humano relacionado enviado à ve em 10/02/26"
   },
@@ -8936,7 +8936,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "74WHNFTW",
     "observacoesTecnicas": "ENCAMINHADO À VE"
   },
@@ -9392,7 +9392,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "F9KA974J",
     "observacoesTecnicas": "MORA NESTE ENDEREO HA 1 ANO. CASO HUMANO ENVIADO À VE. EUTANÁSIA"
   },
@@ -9620,7 +9620,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "WR8PTET4",
     "observacoesTecnicas": "GATA VIVE NESTE ENDEREÇO DESDE FILHOTE"
   },
@@ -9696,7 +9696,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Óbito",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "RELATA QUE ANIMAL VEIO A OBITO"
   },
@@ -9772,7 +9772,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "PYXJJTDH",
     "observacoesTecnicas": "ENCAMINHADO À VE. VIVE DESDE FILHOTE NESTE ENDEREÇO."
   },
@@ -9886,7 +9886,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "M7FDKHKR",
     "observacoesTecnicas": "CONTACTANTE FELINO FUBA NOT 95/26. CASO HUMANO ENVIADO À VE"
   },
@@ -10152,7 +10152,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "CASO ENVIADO Á VE. FELINO COM LESÕES FOI JOGADO NA CASA. APÓS 15 DIAS FELINO MANCHA APRESENTOUN LESÕES"
   },
@@ -10532,7 +10532,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "SIM",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "M7L8CF4C",
     "observacoesTecnicas": "SRA ESTELA RELATA QUE TICO VIVE NESSE ENDEREÇO DESDE FILHOTE, FERIDAS APARECERAM LOGO APOS RESGATAR FELINO COM ESPOROTRICOSE (CHAVEZ 36/26- FOI EUTANASIADO). caso humano relacionado encaminhado à ve."
   },
@@ -11026,7 +11026,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "NÃO",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "HCCPNPCA",
     "observacoesTecnicas": "FUGIU E RETORNOU HA 15 DIAS COM FERIDAS"
   },
@@ -11554,7 +11554,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -11842,7 +11842,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Óbito",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -12130,7 +12130,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -12418,7 +12418,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -12706,7 +12706,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -12994,7 +12994,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -13282,7 +13282,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -13570,7 +13570,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -13858,7 +13858,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -14146,7 +14146,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -14434,7 +14434,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -14722,7 +14722,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -15010,7 +15010,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -15298,7 +15298,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -15586,7 +15586,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -15874,7 +15874,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Óbito",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -16162,7 +16162,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -16450,7 +16450,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -16738,7 +16738,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -17026,7 +17026,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -17314,7 +17314,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -17602,7 +17602,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -17890,7 +17890,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Óbito",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -18178,7 +18178,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -18466,7 +18466,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -18754,7 +18754,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -19042,7 +19042,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -19330,7 +19330,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -19618,7 +19618,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Encerrado Negativo",
     "tratamentoMedicamento": "",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -19906,7 +19906,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Eutanásia",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -20194,7 +20194,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Alta",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -20482,7 +20482,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
@@ -20770,7 +20770,7 @@ export const INITIAL_CASES_2026: CasoZoonoses[] = [
     "statusInvestigacao": "Em Tratamento",
     "tratamentoMedicamento": "Itraconazol 100mg",
     "pessoasComLesoes": "Sim",
-    "notificadoVE": true,
+    "notificadoVE": false,
     "redCapId": "",
     "observacoesTecnicas": "Caso inserido na rotina oficial de Zoonoses Sorocaba."
   },
